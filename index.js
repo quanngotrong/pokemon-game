@@ -4,9 +4,44 @@ const c = canvas.getContext('2d');
 canvas.width = 1024;
 canvas.height = 576;
 
-c.fillStyle = 'white';
-c.fillRect(0, 0, canvas.width, canvas.height);
+const collisionsMap = [];
 
+for (let i = 0; i < collisions.length; i+= 70) {
+    collisionsMap.push(collisions.slice(i, i+70));
+}
+
+class Boudary {
+    static width = 48;
+    static height = 48;
+
+    constructor({ position }) {
+        this.position = position;
+        this.width = 48;
+        this.height = 48;
+    }
+
+    draw() {
+        c.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+}
+
+const boudaries = [];
+
+collisionsMap.forEach((row, i) => {
+    row.forEach((symbol, j) => {
+        if (symbol === 1025) {
+            boudaries.push(
+                new Boudary({
+                    position: {
+                        x: j * Boudary.width,
+                        y: i * Boudary.height
+                    }
+                })
+            );
+        }
+    });
+});
 
 const image = new Image();
 image.src = './img/Pellet Town.png';
@@ -58,6 +93,10 @@ function animate() {
 
     background.draw();
 
+    boudaries.forEach((boudary) => {
+        boudary.draw();
+    });
+
     c.drawImage(
         playerImage,
         0,
@@ -70,32 +109,38 @@ function animate() {
         playerImage.height
     );
 
-    if (keys.w.pressed) {
+    if (keys.w.pressed && lastKey === 'w') {
         background.position.y += 3;
-    } else if (keys.a.pressed) {
+    } else if (keys.a.pressed && lastKey === 'a') {
         background.position.x += 3;
-    } else if (keys.s.pressed) {
+    } else if (keys.s.pressed && lastKey === 's') {
         background.position.y -= 3;
-    } else if (keys.d.pressed) {
+    } else if (keys.d.pressed && lastKey === 'd') {
         background.position.x -= 3;
     }
 }
 
 animate();
 
+let lastKey = '';
+
 window.addEventListener('keydown', (e) => {
     switch (e.key) {
         case 'w':
             keys.w.pressed = true;
+            lastKey = 'w';
             break;
         case 'a':
             keys.a.pressed = true;
+            lastKey = 'a';
             break;
         case 's':
             keys.s.pressed = true;
+            lastKey = 's';
             break;
         case 'd':
             keys.d.pressed = true;
+            lastKey = 'd';
             break;
     }
 });
