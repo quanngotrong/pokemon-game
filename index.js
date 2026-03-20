@@ -1,3 +1,4 @@
+
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
@@ -26,6 +27,10 @@ class Boudary {
     }
 }
 
+const offset = {
+    x: -735,
+    y: -650
+};
 const boudaries = [];
 
 collisionsMap.forEach((row, i) => {
@@ -34,8 +39,8 @@ collisionsMap.forEach((row, i) => {
             boudaries.push(
                 new Boudary({
                     position: {
-                        x: j * Boudary.width,
-                        y: i * Boudary.height
+                        x: j * Boudary.width + offset.x,
+                        y: i * Boudary.height + offset.y
                     }
                 })
             );
@@ -65,10 +70,11 @@ class Sprite {
     }
 }
 
+
 const background = new Sprite({
     position: {
-        x: -755,
-        y: -650
+        x: offset.x,
+        y: offset.y
     },
     image: image
 });
@@ -88,14 +94,24 @@ const keys = {
     }
 };
 
+const testBoundary = new Boudary({
+    position: {
+        x: 400,
+        y: 400
+    }
+});
+
+const movables = [background, testBoundary];
+
 function animate() {
     requestAnimationFrame(animate);
 
     background.draw();
 
-    boudaries.forEach((boudary) => {
-        boudary.draw();
-    });
+    // boudaries.forEach((boudary) => {
+    //     boudary.draw();
+    // });
+    testBoundary.draw();
 
     c.drawImage(
         playerImage,
@@ -110,13 +126,21 @@ function animate() {
     );
 
     if (keys.w.pressed && lastKey === 'w') {
-        background.position.y += 3;
+        movables.forEach((movable) => {
+            movable.position.y += 3;
+        });
     } else if (keys.a.pressed && lastKey === 'a') {
-        background.position.x += 3;
+        movables.forEach((movable) => {
+            movable.position.x += 3;
+        });
     } else if (keys.s.pressed && lastKey === 's') {
-        background.position.y -= 3;
+        movables.forEach((movable) => {
+            movable.position.y -= 3;
+        });
     } else if (keys.d.pressed && lastKey === 'd') {
-        background.position.x -= 3;
+        movables.forEach((movable) => {
+            movable.position.x -= 3;
+        });
     }
 }
 
